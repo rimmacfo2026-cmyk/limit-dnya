@@ -19,8 +19,6 @@ export type Today = {
   samples: Sample[]
   /** Ответов Claude за каждый час дня (24 ячейки). */
   turnsByHour: number[]
-  /** Текущая сессия: условная стоимость с ее начала и когда она началась. */
-  session?: { usd: number; startedAt: number }
 }
 
 declare module 'claude-code' {
