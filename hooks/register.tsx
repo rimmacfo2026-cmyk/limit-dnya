@@ -222,9 +222,10 @@ export const register: Register = on => {
 
   on('command.run', { command: 'limit' }, async $ => {
     const { isPlaced } = await $.ui.open({ id: PANE, title: 'Лимит дня' })
-    if (isPlaced) return { text: 'Открыла панель «Лимит дня».' }
     const t = await read($, today)
     const last = t?.samples[t.samples.length - 1]
+    if (last) showStatus($, last)
+    if (isPlaced) return { text: 'Открыла панель «Лимит дня».' }
     if (!last) return { text: 'Данных о лимитах пока нет: они появятся после первого ответа Claude.' }
     return {
       text: `5 часов: ${bar(last.five ?? 0)} ${Math.round(last.five ?? 0)}% (сброс ${timeOf(last.fiveReset)})\nНеделя:  ${bar(last.week ?? 0)} ${Math.round(last.week ?? 0)}% (сброс ${timeOf(last.weekReset)})`,
