@@ -94,7 +94,7 @@ const chart = (t: Today) => {
 
   const bx = 40
   const bw = (W - 80) / 24
-  const by = 760
+  const by = 800
   const bh = 150
   const bars = spend
     .map((v, h) => {
@@ -106,6 +106,9 @@ const chart = (t: Today) => {
       return `<rect x="${bx + h * bw + 2}" y="${by - hgt}" width="${bw - 4}" height="${Math.max(hgt, v > 0 ? 3 : 0)}" fill="${C.yellow}" stroke="${C.ink}" stroke-width="1.5"/>${dot}`
     })
     .join('')
+  const sessionLine = t.session
+    ? `<text x="${W / 2}" y="${590}" text-anchor="middle" font-family="${HAND}" font-size="19" fill="${C.ink}">эта сессия с ${pad(new Date(t.session.startedAt).getHours())}:${pad(new Date(t.session.startedAt).getMinutes())}: $${t.session.usd.toFixed(2)} по ценам API</text>`
+    : ''
   const first = t.samples[0]
   const since = first ? `${pad(new Date(first.t).getHours())}:${pad(new Date(first.t).getMinutes())}` : ''
   const quiet = spentToday === 0
@@ -122,15 +125,15 @@ const chart = (t: Today) => {
     .filter(s => s.five !== null)
     .map(s => {
       const x = bx + ((s.t - day0.getTime()) / 86400000) * (W - 80)
-      const y = 1010 - ((s.five as number) / 100) * 140
+      const y = 1050 - ((s.five as number) / 100) * 140
       return `${x.toFixed(1)},${y.toFixed(1)}`
     })
   const line = pts.length > 1
-    ? `<polyline points="${bx},1010 ${pts.join(' ')} ${(pts[pts.length - 1] ?? '').split(',')[0]},1010" fill="${C.yellow}" opacity="0.45" stroke="none"/>
+    ? `<polyline points="${bx},1050 ${pts.join(' ')} ${(pts[pts.length - 1] ?? '').split(',')[0]},1050" fill="${C.yellow}" opacity="0.45" stroke="none"/>
        <polyline points="${pts.join(' ')}" fill="none" stroke="${C.ink}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" filter="url(#rough)"/>`
-    : `<text x="${W / 2}" y="950" text-anchor="middle" font-family="${HAND}" font-size="18" fill="${C.grey}">линия появится после нескольких ответов Claude</text>`
+    : `<text x="${W / 2}" y="990" text-anchor="middle" font-family="${HAND}" font-size="18" fill="${C.grey}">линия появится после нескольких ответов Claude</text>`
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} 1080">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} 1120">
   <defs>
     <filter id="grain" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
@@ -139,8 +142,8 @@ const chart = (t: Today) => {
     <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
     <path id="arc" d="M 130 262 A 200 92 0 0 1 510 262"/>
   </defs>
-  <rect width="${W}" height="1080" rx="24" fill="${C.paper}"/>
-  <rect width="${W}" height="1080" rx="24" filter="url(#grain)"/>
+  <rect width="${W}" height="1120" rx="24" fill="${C.paper}"/>
+  <rect width="${W}" height="1120" rx="24" filter="url(#grain)"/>
   ${sun(70, 70)}
   <text font-family="${HAND}" font-size="22" fill="${C.ink}"><textPath href="#arc" startOffset="50%" text-anchor="middle">сколько Claude съел сегодня</textPath></text>
   ${brush(150, 122, 215)}
@@ -150,16 +153,17 @@ const chart = (t: Today) => {
   ${ring(470, 350, 70, week, C.yellowDeep, 'ЗА НЕДЕЛЮ', `сброс ${timeOf(last?.weekReset ?? null)}`)}
   ${brush(150, 548, 340)}
   <text x="${W / 2}" y="550" text-anchor="middle" font-family="${BOLD}" font-size="22" font-weight="900" fill="${C.ink}">СЕГОДНЯ +${spentToday}% НЕДЕЛИ</text>
+  ${sessionLine}
   <text x="40" y="${by - bh - 14}" font-family="${BOLD}" font-size="16" font-weight="900" fill="${C.ink}" letter-spacing="0.5">РАСХОД ПО ЧАСАМ</text>
   <text x="${W - 40}" y="${by - bh - 14}" text-anchor="end" font-family="${HAND}" font-size="16" fill="${C.ink}">● ответы Claude</text>
   <line x1="${bx}" y1="${by}" x2="${W - 40}" y2="${by}" stroke="${C.ink}" stroke-width="2"/>
   ${bars}${hours}${quiet}
-  <text x="40" y="840" font-family="${BOLD}" font-size="16" font-weight="900" fill="${C.ink}" letter-spacing="0.5">5-ЧАСОВОЕ ОКНО ЗА ДЕНЬ</text>
-  <line x1="${bx}" y1="868" x2="${W - 40}" y2="868" stroke="${C.grey}" stroke-dasharray="3 7"/>
-  <text x="${W - 40}" y="862" text-anchor="end" font-family="${HAND}" font-size="14" fill="${C.grey}">100%</text>
-  <line x1="${bx}" y1="1010" x2="${W - 40}" y2="1010" stroke="${C.ink}" stroke-width="2"/>
+  <text x="40" y="880" font-family="${BOLD}" font-size="16" font-weight="900" fill="${C.ink}" letter-spacing="0.5">5-ЧАСОВОЕ ОКНО ЗА ДЕНЬ</text>
+  <line x1="${bx}" y1="908" x2="${W - 40}" y2="908" stroke="${C.grey}" stroke-dasharray="3 7"/>
+  <text x="${W - 40}" y="902" text-anchor="end" font-family="${HAND}" font-size="14" fill="${C.grey}">100%</text>
+  <line x1="${bx}" y1="1050" x2="${W - 40}" y2="1050" stroke="${C.ink}" stroke-width="2"/>
   ${line}
-  <text x="40" y="1054" font-family="${HAND}" font-size="15" fill="${C.grey}">данные Claude Code · обновлено ${timeOf(last ? new Date(last.t).toISOString() : null)} · без бла-бла</text>
+  <text x="40" y="1094" font-family="${HAND}" font-size="15" fill="${C.grey}">данные Claude Code · обновлено ${timeOf(last ? new Date(last.t).toISOString() : null)} · без бла-бла</text>
 </svg>`
 }
 
@@ -184,10 +188,13 @@ async function record($: EngineInterface, limits: SessionRateLimit[]) {
   }
   let saved = (await $.store.get(`day-${day}`)) as Today | undefined
   if (!saved || saved.day !== day) saved = empty(day)
-  const next: Today = { ...saved, samples: [...saved.samples, sample].slice(-2000) }
+  const usage = await $.session.usage()
+  const session = usage.cost ? { usd: usage.cost.usd, startedAt: usage.startedAt } : saved.session
+  const next: Today = { ...saved, samples: [...saved.samples, sample].slice(-2000), session }
   await $.store.set(`day-${day}`, next)
   await update($, today, () => next)
-  $.ui.status(`Лимит: 5 ч ${Math.round(sample.five ?? 0)}% · неделя ${Math.round(sample.week ?? 0)}%`)
+  const usd = session ? ` · сессия $${session.usd.toFixed(2)}` : ''
+  $.ui.status(`Лимит: 5 ч ${Math.round(sample.five ?? 0)}% · неделя ${Math.round(sample.week ?? 0)}%${usd}`)
 }
 
 
@@ -230,7 +237,7 @@ export const register: Register = on => {
     const last = t?.samples[t.samples.length - 1]
     if (!last) return { text: 'Данных о лимитах пока нет: они появятся после первого ответа Claude.' }
     return {
-      text: `5 часов: ${bar(last.five ?? 0)} ${Math.round(last.five ?? 0)}% (сброс ${timeOf(last.fiveReset)})\nНеделя:  ${bar(last.week ?? 0)} ${Math.round(last.week ?? 0)}% (сброс ${timeOf(last.weekReset)})`,
+      text: `5 часов: ${bar(last.five ?? 0)} ${Math.round(last.five ?? 0)}% (сброс ${timeOf(last.fiveReset)})\nНеделя:  ${bar(last.week ?? 0)} ${Math.round(last.week ?? 0)}% (сброс ${timeOf(last.weekReset)})${t?.session ? `\nЭта сессия: $${t.session.usd.toFixed(2)} по ценам API` : ''}`,
     }
   })
 
@@ -249,6 +256,7 @@ export const register: Register = on => {
           <Text bold color={C.pink}>ЛИМИТ ДНЯ</Text>
           <Text>5 часов  <Text color={C.pink}>{bar(last.five ?? 0)}</Text> {Math.round(last.five ?? 0)}%  сброс {timeOf(last.fiveReset)}</Text>
           <Text>Неделя   <Text color={C.pinkSoft}>{bar(last.week ?? 0)}</Text> {Math.round(last.week ?? 0)}%  сброс {timeOf(last.weekReset)}</Text>
+          {t.session ? <Text>Эта сессия: ${t.session.usd.toFixed(2)} по ценам API</Text> : null}
           <Text dimColor>По часам 00→23</Text>
           <Text color={C.pink}>{spark}</Text>
         </Box>

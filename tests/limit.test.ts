@@ -11,6 +11,7 @@ test('показывает лимиты за 5 часов и неделю', asyn
     mem.set(key, value)
     return { value: undefined } as never
   })
+  on('session.usage', async () => ({ value: { startedAt: Date.parse('2026-10-19T10:00:00Z'), context: { window: 200000 }, rateLimits: [], cost: { usd: 1.23 } } }) as never)
   on('ui.status', async () => ({ value: undefined }) as never)
   on('session.measure', async ($, e) => ({ changed: e.changed }))
 
@@ -27,4 +28,5 @@ test('показывает лимиты за 5 часов и неделю', asyn
   const text = JSON.stringify(res)
   expect(text).toContain('34%')
   expect(text).toContain('13%')
+  expect(text).toContain('$1.23')
 })
