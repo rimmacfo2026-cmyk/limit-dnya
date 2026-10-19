@@ -1,0 +1,14 @@
+{
+  "name": "limit-dnya",
+  "owner": {
+    "name": "limit-dnya"
+  },
+  "plugins": [
+    {
+      "name": "limit-dnya",
+      "source": "./",
+      "description": "Лимит дня: сколько лимита подписки Claude потрачено за 5 часов и за неделю, с графиками расхода за сегодня"
+    }
+  ],
+  "description": "Мод «Лимит дня» для Claude Code: расход лимита подписки с графиками"
+}
