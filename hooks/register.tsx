@@ -175,7 +175,11 @@ async function record($: EngineInterface, limits: SessionRateLimit[]) {
   const next: Today = { ...saved, samples: [...saved.samples, sample].slice(-2000) }
   await $.store.set(`day-${day}`, next)
   await update($, today, () => next)
-  $.ui.status(`Лимит: 5 ч ${Math.round(sample.five ?? 0)}% · неделя ${Math.round(sample.week ?? 0)}%`)
+  showStatus($, sample)
+}
+
+function showStatus($: EngineInterface, s: Sample) {
+  $.ui.status(`Лимит: 5 ч ${Math.round(s.five ?? 0)}% · неделя ${Math.round(s.week ?? 0)}%`)
 }
 
 
@@ -187,6 +191,11 @@ export const register: Register = on => {
     await update($, today, () => saved ?? empty(day))
     const usage = await $.session.usage()
     if (usage.rateLimits.length) await record($, usage.rateLimits)
+    else {
+      // Новый чат: свежих цифр еще нет, показываем последнюю сохраненную запись.
+      const last = saved?.samples[saved.samples.length - 1]
+      if (last) showStatus($, last)
+    }
     return next(e)
   })
 
