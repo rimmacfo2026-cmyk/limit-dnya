@@ -22,7 +22,7 @@
 **Самый простой способ.** Откройте Claude Code (в приложении Claude это вкладка Code) и напишите обычными словами:
 
 ```
-Установи мод limit-dnya из маркетплейса OWNER/limit-dnya
+Установи мод limit-dnya из маркетплейса rimmacfo2026-cmyk/limit-dnya
 ```
 
 Claude сам выполнит команду установки. Потом введите `/reload-plugins` и `/limit`.
@@ -32,7 +32,7 @@ Claude сам выполнит команду установки. Потом в�
 В Claude Code, в поле ввода:
 
 ```
-/plugin install limit-dnya --marketplace OWNER/limit-dnya
+/plugin install limit-dnya --marketplace rimmacfo2026-cmyk/limit-dnya
 ```
 
 Подтвердите добавление маркетплейса (`y`) и выберите область установки.
@@ -40,7 +40,7 @@ Claude сам выполнит команду установки. Потом в�
 Или из терминала:
 
 ```
-claude plugin install limit-dnya --marketplace OWNER/limit-dnya
+claude plugin install limit-dnya --marketplace rimmacfo2026-cmyk/limit-dnya
 ```
 
 Нужен Claude Code 2.1.287 или новее и подписка Claude (на API-ключе лимитов подписки нет).
